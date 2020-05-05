@@ -1,11 +1,12 @@
-import Helpers.APKAnalyzerHelper;
+
 import Model.ApkInfoAnalyzer;
 import Model.MethodObject;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.HashMap;
-import java.util.Map;
 
 public class CoverageAnalyzer {
     public static final String ORIGINAL_INFORMATION = "ORIGINAL_INFORMATION";
@@ -27,29 +28,28 @@ public class CoverageAnalyzer {
             System.out.println("Argument List:");
             System.out.println("1. Instrumentation report file");
             System.out.println("2. Exploration Coverage Report (Logcat)");
-            System.out.println("3. APK instrumented path");
-            System.out.println("4. APK non instrumented path");
+            System.out.println("3. APK not instrumented path");
+            System.out.println("4. APK instrumented path");
             return;
         }
         //Getting arguments
         String instrumentationReport = args[0];
         String explorationCoverageReport = args[1];
 
-        String apkPath = args[2];
-        String apkPathNoInstru = args[3];
+        String apkPathNoInstru = args[2];
+        String apkPathOriginal = args[3];
 
 //        ApkInfoAnalyzer apkInfoOriginal = APKAnalyzerHelper.runApkAnalyzer(apkPathNoInstru);
-//        ApkInfoAnalyzer apkInfoInstrumented = APKAnalyzerHelper.runApkAnalyzer(apkPath);
+//        ApkInfoAnalyzer apkInfoInstrumented = APKAnalyzerHelper.runApkAnalyzer(apkPathOriginal);
 //
 //        System.out.println("Original APK Info: " + apkInfoOriginal);
 //        System.out.println("Instrumented APK Info: " + apkInfoInstrumented);
         HashMap<Integer,MethodObject> instrumentedMethods = new HashMap<>();
         try{
             BufferedReader bufferedReader = new BufferedReader(new FileReader(instrumentationReport));
-            String line;
-            line = bufferedReader.readLine();
+            String line = bufferedReader.readLine();
+            System.out.println(line);
             while(line != null){
-                line = line + "";
                 System.out.println(line + " contains: " + INSTRUMENTER + " " + line.contains(INSTRUMENTER) );
                 if(line.contains(INSTRUMENTER)){
                     MethodObject method = new MethodObject(line);
