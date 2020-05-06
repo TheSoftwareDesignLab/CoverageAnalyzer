@@ -1,4 +1,4 @@
-package Helpers;
+package helper;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;

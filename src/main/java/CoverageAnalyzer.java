@@ -1,6 +1,5 @@
-
-import Model.ApkInfoAnalyzer;
-import Model.MethodObject;
+import model.ApkInfoAnalyzer;
+import model.MethodObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 public class CoverageAnalyzer {
     public static final String ORIGINAL_INFORMATION = "ORIGINAL_INFORMATION";
     public static final String MUTATED_INFORMATION = "MUTATED_INFORMATION";
-    public static final String INSTRUMENTER = "INSTRUMENTER";
     public static void main(String[] args) {
         Long start = System.currentTimeMillis();
             runCoverageAnalyzer(args);
@@ -26,7 +24,7 @@ public class CoverageAnalyzer {
         if (args.length < 2) {
             System.out.println("******* ERROR: INCORRECT USAGE *******");
             System.out.println("Argument List:");
-            System.out.println("1. Instrumentation report file");
+            System.out.println("1. Instrumentation report file (-locations.json)");
             System.out.println("2. Exploration Coverage Report (Logcat)");
             System.out.println("3. APK not instrumented path");
             System.out.println("4. APK instrumented path");
@@ -49,9 +47,10 @@ public class CoverageAnalyzer {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(instrumentationReport));
             String line = bufferedReader.readLine();
             System.out.println(line);
+            System.out.println("Michael: " + "Michael Osorio".contains("Michael"));
             while(line != null){
-                System.out.println(line + " contains: " + INSTRUMENTER + " " + line.contains(INSTRUMENTER) );
-                if(line.contains(INSTRUMENTER)){
+                System.out.println(line + " contains: " + "INSTRUMENTER "+ " " + line.contains("INSTRUMENTER") );
+                if(line.contains("INSTRUMENTER")){
                     MethodObject method = new MethodObject(line);
                     instrumentedMethods.put(method.getMethodIndex(),method);
                 }

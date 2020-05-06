@@ -1,8 +1,7 @@
-package Helpers;
+package helper;
 
-import Model.ApkInfoAnalyzer;
+import model.ApkInfoAnalyzer;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
