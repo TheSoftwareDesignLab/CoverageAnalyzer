@@ -76,8 +76,12 @@ public class CoverageAnalyzer {
 
         //List to know what methods were called at least ones but not as many times as the most called ones.
         //(Warm Methods)
+        //Warm methods are in fact almost all the other methods because they are neither in a extreme either other (Not 0 but either the max number)
+        //Could not be relevant or maybe does not add any new information but at least we have the data.
         ArrayList<MethodObject> lessCalledList = new ArrayList<>();
-        MethodObject lessCalled = new MethodObject(999999999);
+
+        //All methods that were called at least once
+        ArrayList<MethodObject> allCalled = new ArrayList<>();
 
         //List to know what methods were the most called ones (Hot methods)
         ArrayList<MethodObject> mostCalledList = new ArrayList<>();
@@ -85,36 +89,56 @@ public class CoverageAnalyzer {
 
         for(int i =0; i < instrumentedMethods.size(); i++){
             MethodObject currentMethod =instrumentedMethods.get(i);
-            if(currentMethod.getCalledTimes() ==0){
+            if(currentMethod.getCalledTimes() == 0){
+                //Filling the never called list of methods
                 neverCalled.add(currentMethod);
-            }else if(currentMethod.getCalledTimes() < lessCalled.getCalledTimes()){
-                lessCalled = currentMethod;
-            }
-
-            if(currentMethod.getCalledTimes() > mostCalled.getCalledTimes()){
+            }else if(currentMethod.getCalledTimes() > mostCalled.getCalledTimes()){
+                //Search for the most called method
                 mostCalled = currentMethod;
             }
-        }
-
-        //Find the list of hot, warm and cold methods
-        for (int i =0; i < instrumentedMethods.size(); i++){
-            MethodObject currentMethod =instrumentedMethods.get(i);
-            if(currentMethod.getCalledTimes() == lessCalled.getCalledTimes()){
-                lessCalledList.add(currentMethod);
-            }else if(currentMethod.getCalledTimes() == mostCalled.getCalledTimes()){
-                mostCalledList.add(currentMethod);
+            if(currentMethod.getCalledTimes() > 0){
+                allCalled.add(currentMethod);
             }
         }
+
+        //Find the list of hot and warm methods
+        for (int i =0; i < instrumentedMethods.size(); i++){
+            MethodObject currentMethod =instrumentedMethods.get(i);
+            if(currentMethod.getCalledTimes() == mostCalled.getCalledTimes()){
+                mostCalledList.add(currentMethod);
+            } else if(currentMethod.getCalledTimes() > 0){
+                lessCalledList.add(currentMethod);
+            }
+        }
+        //Calculate coverage percentage according the number of methods given by apkanalyzer
+        double coveragePercentageAccordingAPKAnalyzer = (allCalled.size()/apkInfoInstrumented.getNumberOfMethodsApkAnalyzer())*100;
+        //Calculate coverage percentage according the number of instrumentedMethods
+        double coveragePercentageAccordingThis = (allCalled.size()/apkInfoInstrumented.getNumberOfMethodsInstrumented())*100;
 
        // buildReport(apkInfoOriginal,apkInfoInstrumented);
     }
 
-    private static void buildReport(ApkInfoAnalyzer apkInfoOriginal, ApkInfoAnalyzer apkInfoNoInstrumented) {
+    private static void buildReport(ApkInfoAnalyzer apkInfoOriginal, ApkInfoAnalyzer apkInfoInstrumented) {
         try{
             //TODO maybe a json file is better
+            //TODO write all these comments somewhere i can remember why i made this decisions and also documentation for the program.
+            
             FileWriter fileWriter = new FileWriter(new File("coverageReport.txt"));
             fileWriter.write(ORIGINAL_INFORMATION + ":"+ apkInfoOriginal);
-            fileWriter.write(MUTATED_INFORMATION + ":"+ apkInfoNoInstrumented);
+            fileWriter.write(MUTATED_INFORMATION + ":"+ apkInfoInstrumented);
+            //TODO store the information of diference
+
+            int differenceBetweenNumberOfMethods = apkInfoInstrumented.getNumberOfMethodsApkAnalyzer() - apkInfoInstrumented.getNumberOfMethodsInstrumented();
+            int sizeDifference = apkInfoInstrumented.getSize() - apkInfoOriginal.getSize();
+
+            //TODO store the relative coverage
+
+            //TODO store the list of methods never called, hot methods, all called and warm methods
+
+            // I think that's all the information we can get from the instrumentation. I wanted to separate calls by class but
+            // it is possible to have too files with the same name when they are in different package.
+            // Maybe that can be solve using the location stored for every mutation in the mutation process.
+
             fileWriter.flush();
         }catch (Exception e){
             System.out.println("Error building report");

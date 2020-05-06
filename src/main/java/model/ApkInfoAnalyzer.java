@@ -68,7 +68,7 @@ public class ApkInfoAnalyzer {
     }
 
     public int getNumberOfMethodsApkAnalyzer() {
-        return numberOfMethodsApkAnalyzer
+        return numberOfMethodsApkAnalyzer;
     }
     public int getNumberOfMethodsInstrumented(){return  numberOfMethodsInstrumented;}
     @Override
