@@ -13,10 +13,9 @@ public class MethodObject {
     private List<Long> callsHistory;
     private int calledTimes = 0;
 
-    public MethodObject (String line){
+    public MethodObject (int id){
         callsHistory = new ArrayList<>();
-        String mutantIndex = line.split("\\s+")[1];
-        methodIndex = Integer.parseInt(mutantIndex);
+        methodIndex = id;
     }
 
     public void setMethodIndex(int methodIndex) {

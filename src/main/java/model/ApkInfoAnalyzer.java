@@ -67,10 +67,10 @@ public class ApkInfoAnalyzer {
         return targetSdk;
     }
 
-    public int setNumberOfMethodsApkAnalyzer() {
-        return numberOfMethodsApkAnalyzer;
+    public int getNumberOfMethodsApkAnalyzer() {
+        return numberOfMethodsApkAnalyzer
     }
-
+    public int getNumberOfMethodsInstrumented(){return  numberOfMethodsInstrumented;}
     @Override
     public String toString() {
         return "{" +
