@@ -1,6 +1,6 @@
 # Coverage Analyzer (CA)
 
-This tool extract statistics of the instumentation made by [InstruAPK](https://github.com/TheSoftwareDesignLab/InstruAPK) and measure the coverage reached by some automatic exploration tools such as [RIP](https://github.com/TheSoftwareDesignLab/rip), Monkey and Droidbot. (The apk used in the automatic exploration should be intrumented by InstruAPK in order to be able to use CoverageAnalyzer).
+This tool computes statistics of the instrumentation made by [InstruAPK](https://github.com/TheSoftwareDesignLab/InstruAPK) and measures the coverage reached by some automatic exploration tools such as [RIP](https://github.com/TheSoftwareDesignLab/rip), Monkey and Droidbot. (The apk used in the automatic exploration should be intrumented by InstruAPK in order to be able to use CoverageAnalyzer).
 
 ## Compile
 
@@ -29,9 +29,9 @@ java -jar CoverageAnalyzer.jar <InstrumentationReportPath> <LogcatPath> <Origina
 
 3. ``<OriginalAPKPath>`` Original APK (Before InstruAPK instrumentation)
 
-4. ``<InstrumentedAPKPath>`` Instrumented (mutated) APK
+4. ``<InstrumentedAPKPath>`` Instrumented APK
 
-Note: You need to setup the system variable called ``Path`` to contain the path to ``/Android/Sdk/cmdline-tools/latest/bin/`` in case of your SO is Windows
+Note: You need to setup the system variable called ``Path`` to contain the path to ``/Android/Sdk/cmdline-tools/latest/bin/`` in case of your operating syste, is Windows
 
 ### Example
 
