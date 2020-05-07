@@ -43,7 +43,7 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 
 ### Coverage Report
 
-```Json
+```Javascript
 
 {
     "originalInformation":{
@@ -83,7 +83,7 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 1. ``originalInformation`` APK information before being instrumented by InstruAPK
     1.1. ``ApkInfoAnalyzer`` objects have the following structure
 
-    ```JSON
+    ```Javascript
     {
         "packageName":"",
         "sizeInBytes":0,
@@ -94,6 +94,7 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
         "summary":"", //summary got by executing apkanalyzer apk summary
     }
     ```
+
 2. ``instrumentedInformation`` APK information after instrumentation by InstruAPK
 
 3. ``differenceBetweenNumberOfMethods`` Difference between the number of methods acording Apkanalyzer (android studio tool) and the total number of methods instrumented by InstruAPK. apkanalyzerMethods - totalNumberInstrumentedMethods
@@ -106,7 +107,7 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 
     6.1. ``MethodObjects`` objects with the following structure
 
-    ```JSON
+    ```Javascript
     {
         "methodIndex":0, //Method unique id
         "fileName":"", //Java file were the method is implemented
