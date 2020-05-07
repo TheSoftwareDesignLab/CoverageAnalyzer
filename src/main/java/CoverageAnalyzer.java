@@ -141,7 +141,7 @@ public class CoverageAnalyzer {
             System.out.println("Coverage analyzer: " + coverageApkAnalyzer);
             System.out.println("Coverage CA: " + coverageCA);
             finalReport.put("coverageApkAnalyzer",coverageApkAnalyzer);
-            finalReport.put("CoverageInstruAPK",coverageCA);
+            finalReport.put("coverageInstruAPK",coverageCA);
             //store the lists of methods instrumented methods, all methods called, cold methods, warm methods, hot methods
             finalReport.put("instrumentedMethods",instrumentedMethods.values());
             finalReport.put("numberInstrumentedMethods",instrumentedMethods.size());

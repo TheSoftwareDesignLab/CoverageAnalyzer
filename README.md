@@ -37,7 +37,7 @@ Note: You need to setup the system variable called ``Path`` to contain the path 
 
  ```Bash
 cd CoverageAnalyzer
-java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.json ./RIPExplorationReport/explorationReport.txt ./apksTest/com.evancharlton.mileage.apk ./mutant/com.evancharlton.mileage-mutant0/com.evancharlton.mileage-aligned-debugSigned.apk
+java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.json ./RIPExplorationReport/logcat.txt ./apksTest/com.evancharlton.mileage.apk ./mutant/com.evancharlton.mileage-mutant0/com.evancharlton.mileage-aligned-debugSigned.apk
 
 ```
 
@@ -46,14 +46,16 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 ```Json
 
 {
-    "originalInformation":{},
+    "originalInformation":{
+        //ApkInfoAnalyzer
+    },
     "instrumentedInformation":{
         //Same content than originalInformation
     },
     "differenceBetweenNumberOfMethods":0,
     "sizeDifferenceBytes":0,
     "coverageApkAnalyzer":0,
-    "CoverageInstruAPK":0,
+    "coverageInstruAPK":0,
     "instrumentedMethods":[
         //MethodObjects
     ],
@@ -78,20 +80,59 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 
 ```
 
-1. ``originalInformation``
+1. ``originalInformation`` APK information before being instrumented by InstruAPK
+    1.1. ``ApkInfoAnalyzer`` objects have the following structure
 
-2. ``instrumentedInformation``
+    ```JSON
+    {
+        "packageName":"",
+        "sizeInBytes":0,
+        "minSdkVersion":0,
+        "targetSdk":0,
+        "numberOfMethodsApkAnalyzer":0, //Number of methods find by apkanalyzer on this apk
+        "numberOfMethodsInstrumented":0, //Number of methods on this apk that were instrumented
+        "summary":"", //summary got by executing apkanalyzer apk summary
+    }
+    ```
+2. ``instrumentedInformation`` APK information after instrumentation by InstruAPK
 
-3. ``differenceBetweenNumberOfMethods``
+3. ``differenceBetweenNumberOfMethods`` Difference between the number of methods acording Apkanalyzer (android studio tool) and the total number of methods instrumented by InstruAPK. apkanalyzerMethods - totalNumberInstrumentedMethods
 
-4. d
+4. ``sizeDifferenceBytes`` Difference between the size of the apk without being instrumented and the one after instrumentation.
 
-5. e
+5. ``coverageInstruAPK`` Coverage measurement using the number of methods instrumented. ``coverageInstruAPK = (allMethodsCalled/numberInstrumentedMethods)*100``
 
-6.
+6. ``instrumentedMethods`` List of methods instrumented by InstruAPK.
 
-7.
+    6.1. ``MethodObjects`` objects with the following structure
 
-8.
+    ```JSON
+    {
+        "methodIndex":0, //Method unique id
+        "fileName":"", //Java file were the method is implemented
+        "methodName":"",
+        "methodParameters":"", //Smali representation of the method parameters
+        "firstCall":0000, //Time in milliseconds when the method was called for the first time
+        "lastCall":0000,//Time in milliseconds when the method was called for the last time
+        "callHistory":[0000,00000,0000], //List of all the times the method was called
+        "calledTimes":0, //Number of times the method was called
+    }
+    ```
 
-9.
+7. ``numberInstrumentedMethods`` Number of instrumented methods
+
+8. ``allMethodsCalled`` List of all methods that were called
+
+9. ``numberCalledMethods`` Number of methods called
+
+10. ``coldMethods``List of methods that were never called
+
+11. ``numberColdMethods`` Number of methods never called (Cold methods)
+
+12. ``warmMethods`` List of methods that were called at least once but not as many times as hot methods
+
+13. ``numberWarmMethods`` Number of warm methods
+
+14. ``hotMethods`` List of methods that were called the most
+
+15. ``numberHotMethods``Number of methods that were called the most (Hot methods)
