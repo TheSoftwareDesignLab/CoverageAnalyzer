@@ -81,6 +81,7 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 ```
 
 1. ``originalInformation`` APK information before being instrumented by InstruAPK
+
     1.1. ``ApkInfoAnalyzer`` objects have the following structure
 
     ```Javascript
@@ -103,9 +104,9 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 
 5. ``coverageInstruAPK`` Coverage measurement using the number of methods instrumented. ``coverageInstruAPK = (allMethodsCalled/numberInstrumentedMethods)*100``
 
-6. ``instrumentedMethods`` List of methods instrumented by InstruAPK.
+6. ``instrumentedMethods`` List of methods instrumented by InstruAPK. Collection of MethodObject.
 
-    6.1. ``MethodObjects`` objects with the following structure
+    6.1. ``MethodObject`` objects with the following structure
 
     ```Javascript
     {
@@ -122,18 +123,18 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 
 7. ``numberInstrumentedMethods`` Number of instrumented methods
 
-8. ``allMethodsCalled`` List of all methods that were called
+8. ``allMethodsCalled`` List of all methods that were called (collection of MethodObject)
 
 9. ``numberCalledMethods`` Number of methods called
 
 10. ``coldMethods``List of methods that were never called
 
-11. ``numberColdMethods`` Number of methods never called (Cold methods)
+11. ``numberColdMethods`` Number of methods never called (i.e., cold methods)
 
 12. ``warmMethods`` List of methods that were called at least once but not as many times as hot methods
 
 13. ``numberWarmMethods`` Number of warm methods
 
-14. ``hotMethods`` List of methods that were called the most
+14. ``hotMethods`` List of methods that were called the most (i.e., top-1 methods)
 
 15. ``numberHotMethods``Number of methods that were called the most (Hot methods)
