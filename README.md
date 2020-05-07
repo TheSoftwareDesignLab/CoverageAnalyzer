@@ -1,13 +1,13 @@
 # Coverage Analyzer (CA)
 
-This tool extract statistics of the instumentation made by [InstruAPK](https://github.com/caev03/InstruAPK.git) and measure the coverage reached by some automatic exploration tools such as [RIP](https://github.com/TheSoftwareDesignLab/rip), Monkey and Droidbot. (The apk used in the automatic exploration should be intrumented by InstruAPK in order to be able to use CoverageAnalyzer).
+This tool extract statistics of the instumentation made by [InstruAPK](https://github.com/TheSoftwareDesignLab/InstruAPK) and measure the coverage reached by some automatic exploration tools such as [RIP](https://github.com/TheSoftwareDesignLab/rip), Monkey and Droidbot. (The apk used in the automatic exploration should be intrumented by InstruAPK in order to be able to use CoverageAnalyzer).
 
 ## Compile
 
 Download and compile CoverageAnalyzer tool for InstruAPK instrumentations
 
 ```bash
-git clone https://github.com/MichaelOsorio2017/CoverageAnalyzer.git
+git clone https://github.com/TheSoftwareDesignLab/CoverageAnalyzer.git
 cd CoverageAnalyzer
 gradle clean
 gradle coverageanalyzer
