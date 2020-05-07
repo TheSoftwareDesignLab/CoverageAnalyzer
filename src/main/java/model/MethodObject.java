@@ -8,8 +8,8 @@ public class MethodObject {
     private String fileName = "";
     private String methodName = "";
     private String methodParameters = "";
-    private Long firstCall;
-    private Long lastCall;
+    private Long firstCall = 0L;
+    private Long lastCall = 0L;
     private List<Long> callsHistory;
     private int calledTimes = 0;
 
@@ -85,11 +85,24 @@ public class MethodObject {
     public void addCall(String stringMillis){
         Long millis = Long.parseLong(stringMillis);
         callsHistory.add(millis);
-        if(firstCall == null){
+        if(firstCall == 0L){
             firstCall = millis;
         }
         lastCall = millis;
         calledTimes = callsHistory.size();
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+                "\"methodIndex\":" + methodIndex +
+                ", \"fileName\":\"" + fileName + '\"' +
+                ", \"methodName\":\"" + methodName + '\"' +
+                ", \"methodParameters\":\"" + methodParameters + '\"' +
+                ", \"firstCall\":" + firstCall +
+                ", \"lastCall\":" + lastCall +
+                ", \"callsHistory\":" + callsHistory +
+                ", \"calledTimes\":" + calledTimes +
+                '}';
+    }
 }

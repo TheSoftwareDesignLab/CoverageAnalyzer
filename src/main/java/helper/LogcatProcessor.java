@@ -15,7 +15,7 @@ public class LogcatProcessor {
             while(line != null){
                 if(line.contains(packageName)){
                     //TODO find the errors ???
-                    System.out.println(line);
+                    System.out.println(line + " ------ TODO extract the errors somehow --------");
                 }else if(line.contains(INSTRUAPK)){
                     line = line.split(INSTRUAPK +": ")[1];
                     String[] values = line.split(";;");

@@ -1,5 +1,7 @@
 package model;
 
+import org.json.simple.JSONObject;
+
 public class ApkInfoAnalyzer {
     private String packageName ="";
     private int size = 0;
@@ -79,8 +81,20 @@ public class ApkInfoAnalyzer {
                 ", minSdkVersion=" + minSdkVersion +
                 ", targetSdk= " + targetSdk +
                 ", numberOfMethodsApkAnalyzer= " + numberOfMethodsApkAnalyzer +
-                ", numberOfMethodsApkAnalyzer= " + numberOfMethodsInstrumented +
+                ", numberOfMethodsInstrumented= " + numberOfMethodsInstrumented +
                 ", summary= '" + summary + '\'' +
                 "}\n";
+    }
+
+    public JSONObject parseToJSON(){
+        JSONObject json = new JSONObject();
+        json.put("packageName",packageName);
+        json.put("sizeInBytes", size);
+        json.put("minSdkVersion",minSdkVersion);
+        json.put("targetSdk",targetSdk);
+        json.put("numberOfMethodsApkAnalyzer",numberOfMethodsApkAnalyzer);
+        json.put("numberOfMethodsInstrumented", numberOfMethodsInstrumented);
+        json.put("summary", summary);
+        return json;
     }
 }

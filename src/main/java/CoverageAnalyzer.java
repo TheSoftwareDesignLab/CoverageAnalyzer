@@ -10,10 +10,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CoverageAnalyzer {
-    public static final String ORIGINAL_INFORMATION = "ORIGINAL_INFORMATION";
-    public static final String MUTATED_INFORMATION = "MUTATED_INFORMATION";
+    public static final String ORIGINAL_INFORMATION = "originalInformation";
+    public static final String MUTATED_INFORMATION = "mutatedInformation";
     public static void main(String[] args) {
         Long start = System.currentTimeMillis();
             runCoverageAnalyzer(args);
@@ -34,16 +35,16 @@ public class CoverageAnalyzer {
             System.out.println("4. APK instrumented path");
             return;
         }
-        //Getting arguments
+        //Getting command  arguments
             //Reports
         String instrumentationReport = args[0];
         String logcat = args[1];
             //APKs
-        String apkPathNoInstru = args[2];
-        String apkPathOriginal = args[3];
+        String apkPathOriginal = args[2];
+        String apkPathInstru = args[3];
 
-        ApkInfoAnalyzer apkInfoOriginal = APKAnalyzerHelper.runApkAnalyzer(apkPathNoInstru);
-        ApkInfoAnalyzer apkInfoInstrumented = APKAnalyzerHelper.runApkAnalyzer(apkPathOriginal);
+        ApkInfoAnalyzer apkInfoOriginal = APKAnalyzerHelper.runApkAnalyzer(apkPathOriginal);
+        ApkInfoAnalyzer apkInfoInstrumented = APKAnalyzerHelper.runApkAnalyzer(apkPathInstru);
 
         HashMap<Integer,MethodObject> instrumentedMethods = new HashMap<>();
         //Instrumentation report
@@ -66,9 +67,9 @@ public class CoverageAnalyzer {
         System.out.println("Original APK Info: " + apkInfoOriginal);
         System.out.println("Instrumented APK Info: " + apkInfoInstrumented);
 
+        System.out.println("Extracting data from exploration");
         //Read logcat to measure coverage; All data will be in the hashmap
         LogcatProcessor.processLogcat(apkInfoInstrumented.getPackageName(),logcat,instrumentedMethods);
-
         //Calculate all metrics
 
         //List to know what methods were never explored (Cold methods)
@@ -87,7 +88,7 @@ public class CoverageAnalyzer {
         ArrayList<MethodObject> mostCalledList = new ArrayList<>();
         MethodObject mostCalled = new MethodObject(-999999999);
 
-        for(int i =0; i < instrumentedMethods.size(); i++){
+        for(int i =1; i < instrumentedMethods.size(); i++){
             MethodObject currentMethod =instrumentedMethods.get(i);
             if(currentMethod.getCalledTimes() == 0){
                 //Filling the never called list of methods
@@ -102,7 +103,7 @@ public class CoverageAnalyzer {
         }
 
         //Find the list of hot and warm methods
-        for (int i =0; i < instrumentedMethods.size(); i++){
+        for (int i =1; i < instrumentedMethods.size(); i++){
             MethodObject currentMethod =instrumentedMethods.get(i);
             if(currentMethod.getCalledTimes() == mostCalled.getCalledTimes()){
                 mostCalledList.add(currentMethod);
@@ -110,35 +111,48 @@ public class CoverageAnalyzer {
                 lessCalledList.add(currentMethod);
             }
         }
-        //Calculate coverage percentage according the number of methods given by apkanalyzer
-        double coveragePercentageAccordingAPKAnalyzer = (allCalled.size()/apkInfoInstrumented.getNumberOfMethodsApkAnalyzer())*100;
-        //Calculate coverage percentage according the number of instrumentedMethods
-        double coveragePercentageAccordingThis = (allCalled.size()/apkInfoInstrumented.getNumberOfMethodsInstrumented())*100;
 
-       // buildReport(apkInfoOriginal,apkInfoInstrumented);
+        System.out.println("Data from exploration extracted");
+        System.out.println("Measuring coverage");
+        //Calculate coverage percentage according the number of methods given by apkanalyzer
+
+        double coveragePercentageAccordingAPKAnalyzer = ((double) allCalled.size() /(double) apkInfoInstrumented.getNumberOfMethodsApkAnalyzer())*100d;
+        //Calculate coverage percentage according the number of instrumentedMethods
+        double coveragePercentageAccordingInstruAPK = ((double)allCalled.size()/(double)apkInfoInstrumented.getNumberOfMethodsInstrumented())*100d;
+        System.out.println("Coverage Measured");
+        System.out.println("Building report");
+        buildReport(apkInfoOriginal,apkInfoInstrumented,instrumentedMethods, neverCalled,lessCalledList,mostCalledList,allCalled,coveragePercentageAccordingAPKAnalyzer,coveragePercentageAccordingInstruAPK);
+        System.out.println("Report built");
     }
 
-    private static void buildReport(ApkInfoAnalyzer apkInfoOriginal, ApkInfoAnalyzer apkInfoInstrumented) {
+    private static void buildReport(ApkInfoAnalyzer apkInfoOriginal, ApkInfoAnalyzer apkInfoInstrumented, HashMap<Integer,MethodObject> instrumentedMethods
+            , List<MethodObject> coldMethods, List<MethodObject> warmMethods, List<MethodObject> hotMethods, List<MethodObject> allMethodsCalled,
+                                    double coverageApkAnalyzer, double coverageCA) {
         try{
-            //TODO maybe a json file is better
-            //TODO write all these comments somewhere i can remember why i made this decisions and also documentation for the program.
-            
-            FileWriter fileWriter = new FileWriter(new File("coverageReport.txt"));
-            fileWriter.write(ORIGINAL_INFORMATION + ":"+ apkInfoOriginal);
-            fileWriter.write(MUTATED_INFORMATION + ":"+ apkInfoInstrumented);
-            //TODO store the information of diference
-
+            JSONObject finalReport = new JSONObject();
+            //APKs information
+            finalReport.put(ORIGINAL_INFORMATION,apkInfoOriginal.parseToJSON());
+            finalReport.put(MUTATED_INFORMATION, apkInfoInstrumented.parseToJSON() );
             int differenceBetweenNumberOfMethods = apkInfoInstrumented.getNumberOfMethodsApkAnalyzer() - apkInfoInstrumented.getNumberOfMethodsInstrumented();
             int sizeDifference = apkInfoInstrumented.getSize() - apkInfoOriginal.getSize();
+            //store the information of difference between APKs
+            finalReport.put("differenceBetweenNumberOfMethods",differenceBetweenNumberOfMethods);
+            finalReport.put("sizeDifferenceBytes", sizeDifference);
+            finalReport.put("numberMethodsCalled",allMethodsCalled.size());
+            //Coverage Information
+            System.out.println("Coverage analyzer: " + coverageApkAnalyzer);
+            System.out.println("Coverage CA: " + coverageCA);
+            finalReport.put("coverageApkAnalyzer",coverageApkAnalyzer);
+            finalReport.put("CoverageInstruAPK",coverageCA);
+            //store the lists of methods instrumented methods, all methods called, cold methods, warm methods, hot methods
+            finalReport.put("instrumentedMethods",instrumentedMethods);
+            finalReport.put("allMethodsCalled",allMethodsCalled);
+            finalReport.put("coldMethods",coldMethods);
+            finalReport.put("warmMethods",warmMethods);
+            finalReport.put("hotMethods",hotMethods);
 
-            //TODO store the relative coverage
-
-            //TODO store the list of methods never called, hot methods, all called and warm methods
-
-            // I think that's all the information we can get from the instrumentation. I wanted to separate calls by class but
-            // it is possible to have too files with the same name when they are in different package.
-            // Maybe that can be solve using the location stored for every mutation in the mutation process.
-
+            FileWriter fileWriter = new FileWriter(new File("coverageReport.json"));
+            fileWriter.write(finalReport.toJSONString());
             fileWriter.flush();
         }catch (Exception e){
             System.out.println("Error building report");
