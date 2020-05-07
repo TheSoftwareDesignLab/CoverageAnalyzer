@@ -14,7 +14,7 @@ import java.util.List;
 
 public class CoverageAnalyzer {
     public static final String ORIGINAL_INFORMATION = "originalInformation";
-    public static final String MUTATED_INFORMATION = "mutatedInformation";
+    public static final String INSTRUMENTED_INFORMATION = "instrumentedInformation";
     public static void main(String[] args) {
         Long start = System.currentTimeMillis();
             runCoverageAnalyzer(args);
@@ -24,7 +24,6 @@ public class CoverageAnalyzer {
     }
 
     public static void runCoverageAnalyzer(String[] args){
-        //TODO leer archivos tanto los de la mutación como los del resultado de la exploración que se supone debe ser un logcat
         //Usage Error
         if (args.length < 2) {
             System.out.println("******* ERROR: INCORRECT USAGE *******");
@@ -132,7 +131,7 @@ public class CoverageAnalyzer {
             JSONObject finalReport = new JSONObject();
             //APKs information
             finalReport.put(ORIGINAL_INFORMATION,apkInfoOriginal.parseToJSON());
-            finalReport.put(MUTATED_INFORMATION, apkInfoInstrumented.parseToJSON() );
+            finalReport.put(INSTRUMENTED_INFORMATION, apkInfoInstrumented.parseToJSON() );
             int differenceBetweenNumberOfMethods = apkInfoInstrumented.getNumberOfMethodsApkAnalyzer() - apkInfoInstrumented.getNumberOfMethodsInstrumented();
             int sizeDifference = apkInfoInstrumented.getSize() - apkInfoOriginal.getSize();
             //store the information of difference between APKs
