@@ -138,18 +138,22 @@ public class CoverageAnalyzer {
             //store the information of difference between APKs
             finalReport.put("differenceBetweenNumberOfMethods",differenceBetweenNumberOfMethods);
             finalReport.put("sizeDifferenceBytes", sizeDifference);
-            finalReport.put("numberMethodsCalled",allMethodsCalled.size());
             //Coverage Information
             System.out.println("Coverage analyzer: " + coverageApkAnalyzer);
             System.out.println("Coverage CA: " + coverageCA);
             finalReport.put("coverageApkAnalyzer",coverageApkAnalyzer);
             finalReport.put("CoverageInstruAPK",coverageCA);
             //store the lists of methods instrumented methods, all methods called, cold methods, warm methods, hot methods
-            finalReport.put("instrumentedMethods",instrumentedMethods);
+            finalReport.put("instrumentedMethods",instrumentedMethods.values());
+            finalReport.put("numberInstrumentedMethods",instrumentedMethods.size());
             finalReport.put("allMethodsCalled",allMethodsCalled);
+            finalReport.put("numberCalledMethods",allMethodsCalled.size());
             finalReport.put("coldMethods",coldMethods);
+            finalReport.put("numberColdMethods",coldMethods.size());
             finalReport.put("warmMethods",warmMethods);
+            finalReport.put("numberWarmMethods",warmMethods.size());
             finalReport.put("hotMethods",hotMethods);
+            finalReport.put("numberHotMethods",hotMethods.size());
 
             FileWriter fileWriter = new FileWriter(new File("coverageReport.json"));
             fileWriter.write(finalReport.toJSONString());
