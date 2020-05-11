@@ -82,7 +82,7 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 
 1. ``originalInformation`` APK information before being instrumented by InstruAPK
 
-    1.1. ``ApkInfoAnalyzer`` objects have the following structure
+    1.1. ``ApkInfoAnalyzer`` objects have the following structure and represent an APK
 
     ```Javascript
     {
@@ -106,7 +106,7 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 
 6. ``instrumentedMethods`` List of methods instrumented by InstruAPK. Collection of MethodObject.
 
-    6.1. ``MethodObject`` objects with the following structure
+    6.1. ``MethodObject`` objects with the following structure and represent an instrumented method
 
     ```Javascript
     {
