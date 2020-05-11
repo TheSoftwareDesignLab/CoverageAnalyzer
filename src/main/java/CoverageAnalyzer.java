@@ -55,7 +55,11 @@ public class CoverageAnalyzer {
             for(int i = 1; mutationJson != null; i++ ){
                 mutationJson = (JSONObject) jsonReport.get(i +"");
                 if(mutationJson != null){
-                    instrumentedMethods.put(i,new MethodObject(i));
+                    MethodObject methodObject = new MethodObject(i);
+                    methodObject.setMethodName((String) mutationJson.get("methodName"));
+                    methodObject.setFileName((String) mutationJson.get("fileName"));
+                    methodObject.setMethodParameters((String) mutationJson.get("methodParameters"));
+                    instrumentedMethods.put(i,methodObject);
                 }
             }
         }catch (Exception e){

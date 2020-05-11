@@ -22,13 +22,14 @@ public class LogcatProcessor {
                     int methodId = Integer.parseInt(values[1]);
                     MethodObject currentMethod = instrumentedMethods.get(methodId);
                     if(currentMethod.getCalledTimes() == 0){
-                        String className = values[2];
-                        String methodName = values[3];
-                        String parameters = values[4];
+                        //These data is already extracted from the mutation report. -locations.json
+//                        String className = values[2];
+//                        String methodName = values[3];
+//                        String parameters = values[4];
                         String callTime = values[5];
-                        currentMethod.setFileName(className);
-                        currentMethod.setMethodName(methodName);
-                        currentMethod.setMethodParameters(parameters);
+//                        currentMethod.setFileName(className);
+//                        currentMethod.setMethodName(methodName);
+//                        currentMethod.setMethodParameters(parameters);
                         currentMethod.addCall(callTime);
                     }else{
                         currentMethod.addCall(values[5]);
