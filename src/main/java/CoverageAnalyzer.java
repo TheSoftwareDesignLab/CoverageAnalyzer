@@ -91,7 +91,7 @@ public class CoverageAnalyzer {
         ArrayList<MethodObject> mostCalledList = new ArrayList<>();
         MethodObject mostCalled = new MethodObject(-999999999);
 
-        for(int i =1; i < instrumentedMethods.size(); i++){
+        for(int i =1; i <= instrumentedMethods.size(); i++){
             MethodObject currentMethod =instrumentedMethods.get(i);
             if(currentMethod.getCalledTimes() == 0){
                 //Filling the never called list of methods
@@ -106,7 +106,7 @@ public class CoverageAnalyzer {
         }
 
         //Find the list of hot and warm methods
-        for (int i =1; i < instrumentedMethods.size(); i++){
+        for (int i =1; i <= instrumentedMethods.size(); i++){
             MethodObject currentMethod =instrumentedMethods.get(i);
             if(currentMethod.getCalledTimes() == mostCalled.getCalledTimes()){
                 mostCalledList.add(currentMethod);
