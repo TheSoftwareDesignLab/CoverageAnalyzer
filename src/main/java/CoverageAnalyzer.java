@@ -72,9 +72,20 @@ public class CoverageAnalyzer {
 
         System.out.println("Extracting data from exploration");
         //Read logcat to measure coverage; All data will be in the hashmap
-        LogcatProcessor.processLogcat(apkInfoInstrumented.getPackageName(),logcat,instrumentedMethods);
-        //Calculate all metrics
 
+        //List to store errors that aren't tagged with AndroidRuntime
+        ArrayList<String> stackTraceError = new ArrayList<>();
+        //List to store errors that are tagged with AndroidRuntime
+        ArrayList<String> stackRuntimeError = new ArrayList<>();
+        LogcatProcessor.processLogcat(apkInfoInstrumented.getPackageName(),logcat,instrumentedMethods,stackTraceError,stackRuntimeError);
+
+        for(int i = 0; i < stackTraceError.size();i++){
+            System.out.println("ERROR: " + stackTraceError.get(i));
+        }
+        for(int i = 0; i < stackRuntimeError.size();i++){
+            System.out.println("RUNTIME ERROR: " + stackRuntimeError.get(i));
+        }
+        //Calculate all metrics
         //List to know what methods were never explored (Cold methods)
         ArrayList<MethodObject> neverCalled = new ArrayList<>();
 
