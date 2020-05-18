@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CoverageAnalyzer {
     public static final String ORIGINAL_INFORMATION = "originalInformation";
@@ -74,17 +75,14 @@ public class CoverageAnalyzer {
         //Read logcat to measure coverage; All data will be in the hashmap
 
         //List to store errors that aren't tagged with AndroidRuntime
-        ArrayList<String> stackTraceError = new ArrayList<>();
+        HashMap<String,Integer> stackTraceError = new HashMap<>();
         //List to store errors that are tagged with AndroidRuntime
-        ArrayList<String> stackRuntimeError = new ArrayList<>();
-        LogcatProcessor.processLogcat(apkInfoInstrumented.getPackageName(),logcat,instrumentedMethods,stackTraceError,stackRuntimeError);
-
-        for(int i = 0; i < stackTraceError.size();i++){
-            System.out.println("ERROR: " + stackTraceError.get(i));
-        }
-        for(int i = 0; i < stackRuntimeError.size();i++){
-            System.out.println("RUNTIME ERROR: " + stackRuntimeError.get(i));
-        }
+        HashMap<String, Integer> stackRuntimeError = new HashMap<>();
+        //List to store the unique crashes
+        ArrayList<String> allCrashes = new ArrayList<>();
+        LogcatProcessor.processLogcat(apkInfoInstrumented.getPackageName(),logcat,instrumentedMethods,allCrashes,stackTraceError,stackRuntimeError);
+        //LogcatProcessor.processLogcat("com.example.testappjava",logcat,instrumentedMethods,allCrashes,stackTraceError,stackRuntimeError);
+        System.out.println("Total crashes found with package: " +  apkInfoInstrumented.getPackageName() + " : " + allCrashes.size());
         //Calculate all metrics
         //List to know what methods were never explored (Cold methods)
         ArrayList<MethodObject> neverCalled = new ArrayList<>();
@@ -127,21 +125,24 @@ public class CoverageAnalyzer {
         }
 
         System.out.println("Data from exploration extracted");
+
         System.out.println("Measuring coverage");
         //Calculate coverage percentage according the number of methods given by apkanalyzer
-
         double coveragePercentageAccordingAPKAnalyzer = ((double) allCalled.size() /(double) apkInfoInstrumented.getNumberOfMethodsApkAnalyzer())*100d;
         //Calculate coverage percentage according the number of instrumentedMethods
         double coveragePercentageAccordingInstruAPK = ((double)allCalled.size()/(double)apkInfoInstrumented.getNumberOfMethodsInstrumented())*100d;
         System.out.println("Coverage Measured");
         System.out.println("Building report");
-        buildReport(apkInfoOriginal,apkInfoInstrumented,instrumentedMethods, neverCalled,lessCalledList,mostCalledList,allCalled,coveragePercentageAccordingAPKAnalyzer,coveragePercentageAccordingInstruAPK);
+        buildReport(apkInfoOriginal,apkInfoInstrumented,instrumentedMethods,
+                neverCalled,lessCalledList,mostCalledList,allCalled,
+                coveragePercentageAccordingAPKAnalyzer,coveragePercentageAccordingInstruAPK,allCrashes,stackTraceError,stackRuntimeError);
         System.out.println("Report built");
     }
 
     private static void buildReport(ApkInfoAnalyzer apkInfoOriginal, ApkInfoAnalyzer apkInfoInstrumented, HashMap<Integer,MethodObject> instrumentedMethods
             , List<MethodObject> coldMethods, List<MethodObject> warmMethods, List<MethodObject> hotMethods, List<MethodObject> allMethodsCalled,
-                                    double coverageApkAnalyzer, double coverageCA) {
+                                    double coverageApkAnalyzer, double coverageCA, List<String> allCrashes, Map<String,Integer> stackErrors, Map<String, Integer> errorsRuntime) {
+        //TODO print the crashes results in the report
         try{
             JSONObject finalReport = new JSONObject();
             //APKs information
@@ -153,8 +154,8 @@ public class CoverageAnalyzer {
             finalReport.put("differenceBetweenNumberOfMethods",differenceBetweenNumberOfMethods);
             finalReport.put("sizeDifferenceBytes", sizeDifference);
             //Coverage Information
-            System.out.println("Coverage analyzer: " + coverageApkAnalyzer);
-            System.out.println("Coverage CA: " + coverageCA);
+            System.out.println("Coverage based on APK Analyzer (Google):" + coverageApkAnalyzer);
+            System.out.println("Coverage based on Instrumentation:" + coverageCA);
             finalReport.put("coverageApkAnalyzer",coverageApkAnalyzer);
             finalReport.put("coverageInstruAPK",coverageCA);
             //store the lists of methods instrumented methods, all methods called, cold methods, warm methods, hot methods
@@ -176,6 +177,5 @@ public class CoverageAnalyzer {
             System.out.println("Error building report");
             e.printStackTrace();
         }
-
     }
 }
