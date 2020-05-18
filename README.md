@@ -1,7 +1,7 @@
 # Coverage Analyzer (CA)
 
 This tool computes statistics of the instrumentation made by [InstruAPK](https://github.com/TheSoftwareDesignLab/InstruAPK) and measures the coverage reached by some automatic exploration tools such as [RIP](https://github.com/TheSoftwareDesignLab/rip), Monkey and Droidbot. (The apk used in the automatic exploration should be intrumented by InstruAPK in order to be able to use CoverageAnalyzer).
-
+//TODO add that the logcat should be in UTF-8 (Maybe all the inputs (?))
 ## Compile
 
 Download and compile CoverageAnalyzer tool for InstruAPK instrumentations
