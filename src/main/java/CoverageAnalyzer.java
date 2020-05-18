@@ -2,6 +2,7 @@ import helper.APKAnalyzerHelper;
 import helper.LogcatProcessor;
 import model.ApkInfoAnalyzer;
 import model.MethodObject;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -117,10 +118,12 @@ public class CoverageAnalyzer {
         //Find the list of hot and warm methods
         for (int i =1; i <= instrumentedMethods.size(); i++){
             MethodObject currentMethod =instrumentedMethods.get(i);
-            if(currentMethod.getCalledTimes() == mostCalled.getCalledTimes()){
-                mostCalledList.add(currentMethod);
-            } else if(currentMethod.getCalledTimes() > 0){
-                lessCalledList.add(currentMethod);
+            if(currentMethod.getCalledTimes() > 0){
+                if(currentMethod.getCalledTimes() == mostCalled.getCalledTimes()){
+                    mostCalledList.add(currentMethod);
+                }else{
+                    lessCalledList.add(currentMethod);
+                }
             }
         }
 
@@ -142,7 +145,6 @@ public class CoverageAnalyzer {
     private static void buildReport(ApkInfoAnalyzer apkInfoOriginal, ApkInfoAnalyzer apkInfoInstrumented, HashMap<Integer,MethodObject> instrumentedMethods
             , List<MethodObject> coldMethods, List<MethodObject> warmMethods, List<MethodObject> hotMethods, List<MethodObject> allMethodsCalled,
                                     double coverageApkAnalyzer, double coverageCA, List<String> allCrashes, Map<String,Integer> stackErrors, Map<String, Integer> errorsRuntime) {
-        //TODO print the crashes results in the report
         try{
             JSONObject finalReport = new JSONObject();
             //APKs information
@@ -160,16 +162,43 @@ public class CoverageAnalyzer {
             finalReport.put("coverageInstruAPK",coverageCA);
             //store the lists of methods instrumented methods, all methods called, cold methods, warm methods, hot methods
             finalReport.put("instrumentedMethods",instrumentedMethods.values());
-            finalReport.put("numberInstrumentedMethods",instrumentedMethods.size());
+            //finalReport.put("totalInstrumentedMethods",instrumentedMethods.size());
             finalReport.put("allMethodsCalled",allMethodsCalled);
-            finalReport.put("numberCalledMethods",allMethodsCalled.size());
+            finalReport.put("totalCalledMethods",allMethodsCalled.size());
             finalReport.put("coldMethods",coldMethods);
-            finalReport.put("numberColdMethods",coldMethods.size());
+            finalReport.put("totalColdMethods",coldMethods.size());
             finalReport.put("warmMethods",warmMethods);
-            finalReport.put("numberWarmMethods",warmMethods.size());
+            finalReport.put("totalWarmMethods",warmMethods.size());
             finalReport.put("hotMethods",hotMethods);
-            finalReport.put("numberHotMethods",hotMethods.size());
+            finalReport.put("totalHotMethods",hotMethods.size());
 
+            JSONArray arrayErrorTraces = new JSONArray();
+            for (String trace:stackErrors.keySet()) {
+                JSONObject obj = new JSONObject();
+                obj.put("trace",trace);
+                obj.put("times",stackErrors.get(trace));
+                arrayErrorTraces.add(obj);
+            }
+            JSONArray arrayRuntimeErrors = new JSONArray();
+            for(String trace:errorsRuntime.keySet()){
+                JSONObject obj = new JSONObject();
+                obj.put("trace",trace);
+                obj.put("times",errorsRuntime.get(trace));
+                arrayRuntimeErrors.add(obj);
+            }
+            finalReport.put("errorTraces",arrayErrorTraces);
+            int totalErrorTraces = 0;
+            for(String s: stackErrors.keySet()){
+                totalErrorTraces += stackErrors.get(s);
+            }
+            finalReport.put("totalErrorTraces",totalErrorTraces);
+            finalReport.put("runtimeErrorTraces",arrayErrorTraces);
+            for(String s: errorsRuntime.keySet()){
+                totalErrorTraces += errorsRuntime.get(s);
+            }
+            finalReport.put("totalRuntimeErrorTraces",totalErrorTraces);
+            finalReport.put("uniqueErrors",allCrashes);
+            finalReport.put("totalUniqueCrashes",allCrashes.size());
             FileWriter fileWriter = new FileWriter(new File("coverageReport.json"));
             fileWriter.write(finalReport.toJSONString());
             fileWriter.flush();
