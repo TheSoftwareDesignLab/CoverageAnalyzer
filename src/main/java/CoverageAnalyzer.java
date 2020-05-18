@@ -156,13 +156,12 @@ public class CoverageAnalyzer {
             finalReport.put("differenceBetweenNumberOfMethods",differenceBetweenNumberOfMethods);
             finalReport.put("sizeDifferenceBytes", sizeDifference);
             //Coverage Information
-            System.out.println("Coverage based on APK Analyzer (Google):" + coverageApkAnalyzer);
+            System.out.println("Coverage based on APK Analyzer (Android Studio):" + coverageApkAnalyzer);
             System.out.println("Coverage based on Instrumentation:" + coverageCA);
             finalReport.put("coverageApkAnalyzer",coverageApkAnalyzer);
             finalReport.put("coverageInstruAPK",coverageCA);
             //store the lists of methods instrumented methods, all methods called, cold methods, warm methods, hot methods
             finalReport.put("instrumentedMethods",instrumentedMethods.values());
-            //finalReport.put("totalInstrumentedMethods",instrumentedMethods.size());
             finalReport.put("allMethodsCalled",allMethodsCalled);
             finalReport.put("totalCalledMethods",allMethodsCalled.size());
             finalReport.put("coldMethods",coldMethods);
@@ -172,6 +171,7 @@ public class CoverageAnalyzer {
             finalReport.put("hotMethods",hotMethods);
             finalReport.put("totalHotMethods",hotMethods.size());
 
+            // Log crashes found in the exploration
             JSONArray arrayErrorTraces = new JSONArray();
             for (String trace:stackErrors.keySet()) {
                 JSONObject obj = new JSONObject();
@@ -186,18 +186,18 @@ public class CoverageAnalyzer {
                 obj.put("times",errorsRuntime.get(trace));
                 arrayRuntimeErrors.add(obj);
             }
-            finalReport.put("errorTraces",arrayErrorTraces);
+            finalReport.put("crashTraces",arrayErrorTraces);
             int totalErrorTraces = 0;
             for(String s: stackErrors.keySet()){
                 totalErrorTraces += stackErrors.get(s);
             }
-            finalReport.put("totalErrorTraces",totalErrorTraces);
-            finalReport.put("runtimeErrorTraces",arrayErrorTraces);
+            finalReport.put("totalCrashTraces",totalErrorTraces);
+            finalReport.put("runtimeCrashTraces",arrayErrorTraces);
             for(String s: errorsRuntime.keySet()){
                 totalErrorTraces += errorsRuntime.get(s);
             }
-            finalReport.put("totalRuntimeErrorTraces",totalErrorTraces);
-            finalReport.put("uniqueErrors",allCrashes);
+            finalReport.put("totalRuntimeCrashTraces",totalErrorTraces);
+            finalReport.put("uniqueCrashes",allCrashes);
             finalReport.put("totalUniqueCrashes",allCrashes.size());
             FileWriter fileWriter = new FileWriter(new File("coverageReport.json"));
             fileWriter.write(finalReport.toJSONString());

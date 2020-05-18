@@ -1,7 +1,10 @@
 # Coverage Analyzer (CA)
 
-This tool computes statistics of the instrumentation made by [InstruAPK](https://github.com/TheSoftwareDesignLab/InstruAPK) and measures the coverage reached by some automatic exploration tools such as [RIP](https://github.com/TheSoftwareDesignLab/rip), Monkey and Droidbot. (The apk used in the automatic exploration should be intrumented by InstruAPK in order to be able to use CoverageAnalyzer).
-//TODO add that the logcat should be in UTF-8 (Maybe all the inputs (?))
+This tool computes statistics of the instrumentation made by [InstruAPK](https://github.com/TheSoftwareDesignLab/InstruAPK), measures the coverage reached by some automatic exploration tools such as [RIP](https://github.com/TheSoftwareDesignLab/rip), Monkey and Droidbot. (The apk used in the automatic exploration should be intrumented by InstruAPK in order to be able to use CoverageAnalyzer and the logcat while the application was explored needs to be extracted).
+
+Note: Some of the tools already extract the logcat. In that case, that logcat can be used.
+Note 2: The logcat file should have as encoding type UTF-8
+
 ## Compile
 
 Download and compile CoverageAnalyzer tool for InstruAPK instrumentations
@@ -19,19 +22,19 @@ The generated ```.jar``` can be found in ``CoverageAnalyzer/build/libs/CoverageA
 
 To run CoverageAnalyzer use the following command
 
+Note: You need to setup the system variable called ``Path`` to contain the path to ``/Android/Sdk/cmdline-tools/latest/bin/`` which is the location of apkanalyzer.bat, in case of your operating system is Windows.
+
 ```Bash
 java -jar CoverageAnalyzer.jar <InstrumentationReportPath> <LogcatPath> <OriginalAPKPath> <InstrumentedAPKPath>
 ```
 
 1. ``<InstrumentationReportPath>`` Instrumentation report .json file (mutation report)
 
-2. ``<LogcatPath>`` Logcat
+2. ``<LogcatPath>`` Logcat .txt file
 
 3. ``<OriginalAPKPath>`` Original APK (Before InstruAPK instrumentation)
 
 4. ``<InstrumentedAPKPath>`` Instrumented APK
-
-Note: You need to setup the system variable called ``Path`` to contain the path to ``/Android/Sdk/cmdline-tools/latest/bin/`` in case of your operating syste, is Windows
 
 ### Example
 
@@ -47,35 +50,46 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 
 {
     "originalInformation":{
-        //ApkInfoAnalyzer
+        //ApkInfoAnalyzer (1.1)
     },
     "instrumentedInformation":{
-        //Same content than originalInformation
+        //ApkInfoAnalyzer (1.1)
     },
     "differenceBetweenNumberOfMethods":0,
     "sizeDifferenceBytes":0,
     "coverageApkAnalyzer":0,
     "coverageInstruAPK":0,
     "instrumentedMethods":[
-        //MethodObjects
+        //MethodObjects (6.1)
     ],
-    "numberInstrumentedMethods":0,
     "allMethodsCalled":[
-        //MethodObjects
+        //MethodObjects (6.1)
     ],
-    "numberCalledMethods":0,
+    "totalCalledMethods":0,
     "coldMethods":[
-        //MethodObjects
+        //MethodObjects (6.1)
     ],
-    "numberColdMethods":0,
+    "totalColdMethods":0,
     "warmMethods":[
-        //MethodObjects
+        //MethodObjects (6.1)
     ],
-    "numberWarmMethods":0,
+    "totalWarmMethods":0,
     "hotMethods":[
-        //MethodObjects
+        //MethodObjects (6.1)
     ],
-    "numberHotMethods":0,
+    "totalHotMethods":0,
+    "errorTraces":[{
+        "trace":"", //Complete trace
+        "times":0, //Times the exact same trace was found
+    }]
+    "totalErrorTraces":0,
+    "runtimeErrorTraces":[{
+        "trace":"", //Complete trace
+        "times":0 //Times the exact same trace was found
+    }],
+    "totalRuntimeErrorTraces":0,
+    "uniqueCrashes":[""],
+    "totalUniqueCrashes":0,
 }
 
 ```
@@ -90,13 +104,13 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
         "sizeInBytes":0,
         "minSdkVersion":0,
         "targetSdk":0,
-        "numberOfMethodsApkAnalyzer":0, //Number of methods find by apkanalyzer on this apk
-        "numberOfMethodsInstrumented":0, //Number of methods on this apk that were instrumented
-        "summary":"", //summary got by executing apkanalyzer apk summary
+        "numberOfMethodsApkAnalyzer":0, //Number of methods find by apkanalyzer in this apk
+        "numberOfMethodsInstrumented":0, //Number of methods instrumented in this APK
+        "summary":"", //summary got by executing apkanalyzer's command 'apk summary'
     }
     ```
 
-2. ``instrumentedInformation`` APK information after instrumentation by InstruAPK
+2. ``instrumentedInformation`` APK information after instrumentation by InstruAPK. Same structure of 1.1
 
 3. ``differenceBetweenNumberOfMethods`` Difference between the number of methods acording Apkanalyzer (android studio tool) and the total number of methods instrumented by InstruAPK. apkanalyzerMethods - totalNumberInstrumentedMethods
 
@@ -111,8 +125,8 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
     ```Javascript
     {
         "methodIndex":0, //Method unique id
-        "fileName":"", //Java file were the method is implemented
-        "methodName":"",
+        "fileName":"", //Smali file name - Class name.
+        "methodName":"", //Method name
         "methodParameters":"", //Smali representation of the method parameters
         "firstCall":0000, //Time in milliseconds when the method was called for the first time
         "lastCall":0000,//Time in milliseconds when the method was called for the last time
@@ -121,20 +135,30 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
     }
     ```
 
-7. ``numberInstrumentedMethods`` Number of instrumented methods
+7. ``allMethodsCalled`` List of all methods that were called. Collection of MethodObject
 
-8. ``allMethodsCalled`` List of all methods that were called. Collection of MethodObject
+8. ``totalCalledMethods`` Total number of methods called
 
-9. ``numberCalledMethods`` Number of methods called
+9. ``coldMethods``List of methods that were never called. Collection of MethodObject
 
-10. ``coldMethods``List of methods that were never called. Collection of MethodObject
+10. ``totalColdMethods`` Total number of methods never called (i.e., cold methods)
 
-11. ``numberColdMethods`` Number of methods never called (i.e., cold methods)
+11. ``warmMethods`` List of methods that were called at least once but not as many times as hot methods. Collection of MethodObject
 
-12. ``warmMethods`` List of methods that were called at least once but not as many times as hot methods. Collection of MethodObject
+12. ``totalWarmMethods`` Total number of warm methods
 
-13. ``numberWarmMethods`` Number of warm methods
+13. ``hotMethods`` List of methods that were called the most (i.e., top-1 methods). Collection of MethodObject
 
-14. ``hotMethods`` List of methods that were called the most (i.e., top-1 methods). Collection of MethodObject
+14. ``totalHotMethods`` Total number of methods that were called the most (Hot methods)
 
-15. ``numberHotMethods``Number of methods that were called the most (Hot methods)
+15. ``crashTraces`` List of application traces tagged with 'System.err' found in the logcat file
+
+16. ``totalCrashTraces`` Total number of crashes tagged with 'System.err'
+
+17. ``runtimeCrashTraces`` List of application traces tagged with 'AndroidRuntime' found in the logcat file
+
+18. ``totalRuntimeCrashTraces`` Total Number of crashes tagged with 'AndroidRuntime'
+
+19. ``uniqueCrashes`` List of unique traces found in the logcat file. Both tagged with 'System.err' and 'AndroidRuntime'
+
+20. ``totalUniqueCrashes`` Total number of unique crashes found in the logcat file
