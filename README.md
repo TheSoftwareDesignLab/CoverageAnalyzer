@@ -88,8 +88,8 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
         "times":0 //Times the exact same trace was found
     }],
     "totalRuntimeErrorTraces":0,
-    "uniqueCrashes":[""],
-    "totalUniqueCrashes":0,
+    "uniqueTraces":[""],
+    "totalUniqueTraces":0,
 }
 
 ```
@@ -151,14 +151,14 @@ java -jar ./CoverageAnalyzer.jar ./mutant/com.evancharlton.mileage-locations.jso
 
 14. ``totalHotMethods`` Total number of methods that were called the most (Hot methods)
 
-15. ``crashTraces`` List of application traces tagged with 'System.err' found in the logcat file
+15. ``errorTraces`` List of traces of the application under analysis that are tagged with 'System.err' found in the logcat file
 
-16. ``totalCrashTraces`` Total number of crashes tagged with 'System.err'
+16. ``totalErrorTraces`` Total number of traces tagged with 'System.err' found
 
-17. ``runtimeCrashTraces`` List of application traces tagged with 'AndroidRuntime' found in the logcat file
+17. ``runtimeErrorTraces`` List of traces of the application under analysis that are tagged with 'AndroidRuntime' found in the logcat file
 
-18. ``totalRuntimeCrashTraces`` Total Number of crashes tagged with 'AndroidRuntime'
+18. ``totalRuntimeErrorTraces`` Total Number of traces tagged with 'AndroidRuntime' found
 
-19. ``uniqueCrashes`` List of unique traces found in the logcat file. Both tagged with 'System.err' and 'AndroidRuntime'
+19. ``uniqueTraces`` List of unique traces of the application under analysis that were tagged with 'System.err' or 'AndroidRuntime' found in the logcat file
 
-20. ``totalUniqueCrashes`` Total number of unique crashes found in the logcat file
+20. ``totalUniqueTraces`` Total number of unique traces found in the logcat file

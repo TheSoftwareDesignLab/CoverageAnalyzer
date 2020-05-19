@@ -186,19 +186,19 @@ public class CoverageAnalyzer {
                 obj.put("times",errorsRuntime.get(trace));
                 arrayRuntimeErrors.add(obj);
             }
-            finalReport.put("crashTraces",arrayErrorTraces);
+            finalReport.put("errorTraces",arrayErrorTraces);
             int totalErrorTraces = 0;
             for(String s: stackErrors.keySet()){
                 totalErrorTraces += stackErrors.get(s);
             }
-            finalReport.put("totalCrashTraces",totalErrorTraces);
-            finalReport.put("runtimeCrashTraces",arrayErrorTraces);
+            finalReport.put("totalErrorTraces",totalErrorTraces);
+            finalReport.put("runtimeErrorTraces",arrayErrorTraces);
             for(String s: errorsRuntime.keySet()){
                 totalErrorTraces += errorsRuntime.get(s);
             }
-            finalReport.put("totalRuntimeCrashTraces",totalErrorTraces);
-            finalReport.put("uniqueCrashes",allCrashes);
-            finalReport.put("totalUniqueCrashes",allCrashes.size());
+            finalReport.put("totalRuntimeErrorTraces",totalErrorTraces);
+            finalReport.put("uniqueTraces",allCrashes);
+            finalReport.put("totalUniqueTraces",allCrashes.size());
             FileWriter fileWriter = new FileWriter(new File("coverageReport.json"));
             fileWriter.write(finalReport.toJSONString());
             fileWriter.flush();
