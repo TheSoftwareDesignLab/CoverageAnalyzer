@@ -12,6 +12,8 @@ public class APKAnalyzerHelper {
     private final static String MIN_SDK = "MIN_SDK";
     private final static String TARGET_SDK = "TARGET_SDK";
     private final static String METHOD_COUNT = "METHOD_COUNT";
+    private final static String APPLICATION_ID = "APPLICATION_ID";
+
     public final static ApkInfoAnalyzer runApkAnalyzer(String apkPath){
         System.out.println("apk path: " + apkPath + "\n");
         try{
@@ -19,6 +21,11 @@ public class APKAnalyzerHelper {
             //Get summary and package name
             String summary = getSummary(apkPath);
             String packageName = summary.split("\\s+")[0];
+
+            if(packageName.equals("unknown")){
+                //Get application id (package name)
+                packageName = getApplicationId(apkPath);
+            }
             apkInfo.setSummary(summary);
             apkInfo.setPackageName(packageName);
             //Get apk size
@@ -97,6 +104,15 @@ public class APKAnalyzerHelper {
         return total;
     }
 
+    public  final static String getApplicationId(String apkPath) throws  Exception{
+        List<String> response;
+        if(isWindowsOS()){
+            response = ProcessExecutorHelper.executeProcess(Arrays.asList("apkanalyzer.bat","manifest","application-id",apkPath),APPLICATION_ID);
+        }else{
+            response = ProcessExecutorHelper.executeProcess(Arrays.asList("apkanalyzer","manifest","application-id",apkPath),APPLICATION_ID);
+        }
+        return  response.get(0).trim();
+    }
     private static boolean isWindowsOS(){
         return System.getProperty("os.name").toLowerCase().indexOf("win") >= 0;
     }
