@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class LogcatProcessor {
     public static final String INSTRUAPK = "InstruAPK";
-    public static final String ANDROID_RUNTIME = "E AndroidRuntime:";
-    public static final String SYSTEM_ERR = "System.err:";
+    public static final String ANDROID_RUNTIME = "AndroidRuntime" + ".*" + ":";
+    public static final String SYSTEM_ERR = "System\\.err:" + ".*" + ":" ;
     public static final String CAUSED_BY = "Caused by:";
     public static final void processLogcat(String packageName, String logcatPath, HashMap<Integer, MethodObject> instrumentedMethods, List<String> allCrashes, Map<String,Integer> stackTraceError, Map<String,Integer> stackRuntimeError){
         try{
@@ -64,7 +64,7 @@ public class LogcatProcessor {
                     causedByFound = false;
                 } else if(line.contains(INSTRUAPK)){
                     lastLine = line;
-                    line = line.split(INSTRUAPK +": ")[1];
+                    line = line.split(INSTRUAPK + ".*" +": ")[1];
                     String[] values = line.split(";;");
                     int methodId = Integer.parseInt(values[1]);
                     MethodObject currentMethod = instrumentedMethods.get(methodId);
