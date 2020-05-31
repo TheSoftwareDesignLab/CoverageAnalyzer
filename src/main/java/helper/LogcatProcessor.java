@@ -6,10 +6,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LogcatProcessor {
     public static final String INSTRUAPK = "InstruAPK";
@@ -65,14 +62,16 @@ public class LogcatProcessor {
                 } else if(line.contains(INSTRUAPK)){
                     lastLine = line;
                     line = line.split(INSTRUAPK + ".*" +": ")[1];
+                    //System.out.println("line: " +line);
                     String[] values = line.split(";;");
+                    //System.out.println("values: " + Arrays.toString(values));
                     int methodId = Integer.parseInt(values[1]);
                     MethodObject currentMethod = instrumentedMethods.get(methodId);
                     if(currentMethod.getCalledTimes() == 0){
-                        String callTime = values[5];
+                        String callTime = values[values.length-1];
                         currentMethod.addCall(callTime);
                     }else{
-                        currentMethod.addCall(values[5]);
+                        currentMethod.addCall(values[values.length-1]);
                     }
                     line = bufferedReader.readLine();
                 }else{
