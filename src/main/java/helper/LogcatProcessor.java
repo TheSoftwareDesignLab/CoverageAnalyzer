@@ -10,8 +10,11 @@ import java.util.*;
 
 public class LogcatProcessor {
     public static final String INSTRUAPK = "InstruAPK";
-    public static final String ANDROID_RUNTIME = "AndroidRuntime" + ".*" + ":";
-    public static final String SYSTEM_ERR = "System\\.err:" + ".*" + ":" ;
+    public static final String INSTRUAPK_SPLIT = "InstruAPK(\\(\\d*\\))*:";
+    public static final String ANDROID_RUNTIME = "AndroidRuntime";
+    public static final String ANDROID_RUNTIME_SPLIT = "AndroidRuntime(\\(\\d*\\))*:";
+    public static final String SYSTEM_ERR = "System.err";
+    public static final String SYSTEM_ERR_SPLIT = "System\\.err(\\(\\d*\\))*:";
     public static final String CAUSED_BY = "Caused by:";
     public static final void processLogcat(String packageName, String logcatPath, HashMap<Integer, MethodObject> instrumentedMethods, List<String> allCrashes, Map<String,Integer> stackTraceError, Map<String,Integer> stackRuntimeError){
         try{
@@ -23,10 +26,13 @@ public class LogcatProcessor {
             boolean causedByFound = false;
             String lastLine = "";
             while(line != null){
+//                System.out.println("LINE: " + line);
+//                System.out.println("ANDROID: " + line.contains(ANDROID_RUNTIME) + " : " + ANDROID_RUNTIME);
+//                System.out.println("ERROR: " + line.contains(SYSTEM_ERR) + " : " + SYSTEM_ERR);
                 if(line.contains(SYSTEM_ERR)){
                     if(error == "" || line.contains("at")){
                         lastLine = line;
-                        line = line.split(SYSTEM_ERR)[1];
+                        line = line.split(SYSTEM_ERR_SPLIT)[1];
                         error = error + " " + line.trim();
                         line = bufferedReader.readLine();
                     }else {
@@ -38,7 +44,8 @@ public class LogcatProcessor {
                         error = "";
                 }else if(line.contains(ANDROID_RUNTIME)){
                     lastLine = line;
-                    line = line.split(ANDROID_RUNTIME)[1];
+                    //System.out.println("android runtime line: " + line);
+                    line = line.split(ANDROID_RUNTIME_SPLIT)[1];
                     if(!causedByFound){
                         if(line.contains(CAUSED_BY)){
                             causedByFound = true;
@@ -57,11 +64,14 @@ public class LogcatProcessor {
                     line = bufferedReader.readLine();
                 }else if(error != "" && lastLine.contains(ANDROID_RUNTIME)){
                     auxRuntime.add(error);
+                    //System.out.println("android runtime full error: " + error);
                     error = "";
                     causedByFound = false;
                 } else if(line.contains(INSTRUAPK)){
                     lastLine = line;
-                    line = line.split(INSTRUAPK + ".*" +": ")[1];
+                    String[] instruSplit =line.split(INSTRUAPK_SPLIT);
+                   // System.out.println("instru split: " + Arrays.toString(instruSplit));
+                    line = line.split(INSTRUAPK_SPLIT)[1];
                     //System.out.println("line: " +line);
                     String[] values = line.split(";;");
                     //System.out.println("values: " + Arrays.toString(values));
@@ -88,6 +98,7 @@ public class LogcatProcessor {
             }
             for(int i =0; i < auxRuntime.size(); i++){
                 error = auxRuntime.get(i);
+               // System.out.println("Error in for: " + error);
                 if(error.contains(packageName) && stackRuntimeError.get(error) == null){
                     stackRuntimeError.put(error,1);
                 }else if(stackRuntimeError.get(error) != null){
@@ -98,6 +109,7 @@ public class LogcatProcessor {
             allCrashes.addAll(stackRuntimeError.keySet());
         }catch (Exception e){
             System.out.println("There was a problem reading the exploration report (logcat)");
+            System.out.println("Message Error: " + e.getMessage() + "\nStack Trace: " + Arrays.toString(e.getStackTrace()));
             e.printStackTrace();
         }
 
